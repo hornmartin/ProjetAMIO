@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference android:title="Email adress"
+        android:key="mail"
+        android:summary="Please provide your email adresse"></EditTextPreference>
+    <EditTextPreference android:title="Hours range"
+        android:key="hours"
+        android:summary="Please provide the hours range"></EditTextPreference>
+</PreferenceScreen>

@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -19,40 +20,54 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //coucou
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d("MainActivity", "Creation de l'activité");
 
         CheckBox checkbox = (CheckBox) findViewById(R.id.checkBox);
 
-        ToggleButton button1 = (ToggleButton) findViewById(R.id.Btn1);
-        button1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+        ToggleButton serviceButton = (ToggleButton) findViewById(R.id.serviceButton);
+        serviceButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton button, boolean isChecked) {
-                TextView TV2 = (TextView) findViewById(R.id.TV2);
-
-                if (button.isChecked()) {
-                    startService(new Intent(getBaseContext(), MainService.class));
-                    TV2.setText("En cours");
-                }
-                else{
-                    stopService(new Intent(getBaseContext(), MainService.class));
-                    TV2.setText("Arrêté");
-                }
-
-            }
-        });
-
-        ToggleButton button2 = (ToggleButton) findViewById(R.id.Btn2);
-        button2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-            @Override
-            public void onCheckedChanged(CompoundButton button, boolean isChecked) {
+                Log.d("service", "Button check");
                 if (button.isChecked()) {
                     startService(new Intent(getBaseContext(), WebService.class));
                 }
                 else{
                     stopService(new Intent(getBaseContext(), WebService.class));
+                }
+
+            }
+        });
+
+        ToggleButton notifButton = (ToggleButton) findViewById(R.id.notifButton);
+        notifButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton button, boolean isChecked) {
+
+                if (button.isChecked()) {
+                    //do something
+                }
+                else{
+                    //do something
+                }
+
+            }
+        });
+
+        ToggleButton settingsButton = (ToggleButton) findViewById(R.id.settingsButton);
+        settingsButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton button, boolean isChecked) {
+                Log.d("settings", "button");
+                if (button.isChecked()) {
+                    Intent settingsIntent = new Intent(MainActivity.this, Settings.class);
+                    MainActivity.this.startActivity(settingsIntent);
+                }
+                else{
+                    //do something
                 }
 
             }
@@ -80,6 +95,15 @@ public class MainActivity extends AppCompatActivity {
             if(Float.parseFloat(value1) > 250){
                 Log.d("Data", "Lumière allumée (mote1)");
                 onLightChange();
+                Intent emailIntent = new Intent(Intent.ACTION_SEND
+                );
+                emailIntent.setData(Uri.parse("mailto:meskhen@gmail.com"));
+                emailIntent.setType("message/rfc822");
+                //emailIntent.setType("text/plain");
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+                emailIntent.putExtra(Intent.EXTRA_TEXT, "Body");
+                //emailIntent.putExtra(Intent.EXTRA_EMAIL, "meskhen@gmail.com");
+                startActivity(Intent.createChooser(emailIntent, "Send mail..."));
             }else{
                 Log.d("Data", "Lumière éteinte (mote1)");
                 onLightChange();
@@ -89,8 +113,8 @@ public class MainActivity extends AppCompatActivity {
             }else{
                 Log.d("Data", "Lumière éteinte (mote2)");
             }
-            TextView TV4 = (TextView) findViewById(R.id.TV4);
-            TV4.setText(value1);
+            TextView moteText = (TextView) findViewById(R.id.moteText);
+            moteText.setText("Mote 1 : "+value1+"\nMote 2 : "+value2);
         }
     };
 
@@ -144,15 +168,8 @@ public class MainActivity extends AppCompatActivity {
             CheckBox checkbox = (CheckBox) findViewById(R.id.checkBox);
             Boolean checkBoxState = sharedPref.getBoolean("checkBoxState", false);
             Log.d("CheckBoxStatus", checkBoxState.toString());
-            if(checkBoxState){/*
-                startService(new Intent(getBaseContext(), MainService.class));
-                TextView TV2 = (TextView) findViewById(R.id.TV2);
-                TV2.setText("En cours");
-                ToggleButton Btn1 = (ToggleButton) findViewById(R.id.Btn1);
-                Btn1.setChecked(true);
-                */
+            if(checkBoxState){
 
-                // TODO Auto-generated method stub
                 if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)){
                     Intent i = new Intent(context, MainActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -26,6 +26,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".Settings">
+        </activity>
+
         <service
             android:name=".MainService"
             android:enabled="true"

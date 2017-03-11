@@ -3,12 +3,10 @@ package com.example.boixel.projetamio;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.support.annotation.Nullable;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -23,8 +21,14 @@ import java.net.URL;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class WebService extends Service {
+
+    private Timer myTimer;
+    private MyTimerTask myTask;
+
     public WebService() {
     }
 
@@ -43,15 +47,25 @@ public class WebService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("WebService", "Service web lancé!");
-        URL url;
-        HttpURLConnection urlConnection = null;
-        new getData().execute("http://iotlab.telecomnancy.eu/rest/data/1/light1/last");
+        myTask = new MyTimerTask();
+        myTimer = new Timer();
+        myTimer.schedule(myTask, 3000, 3000);
         return START_STICKY;
+    }
+
+    class MyTimerTask extends TimerTask {
+        public void run() {
+            URL url;
+            HttpURLConnection urlConnection = null;
+            new getData().execute("http://iotlab.telecomnancy.eu/rest/data/1/light1/last");
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        myTimer.cancel();
+        myTask.cancel();
         Log.d("WebService", "Service web terminé.");
     }
 

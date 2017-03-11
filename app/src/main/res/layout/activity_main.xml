@@ -10,87 +10,88 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.boixel.projetamio.MainActivity">
 
-    <TextView
-        android:text="Service status:"
+    <ToggleButton
+        android:text="ToggleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="72dp"
-        android:id="@+id/TV1"/>
-
-    <TextView
-        android:text="Last alert:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/TV5"
-        android:layout_below="@+id/TV3"
-        android:layout_alignStart="@+id/TV3"
-        android:layout_marginTop="67dp"
-        android:layout_alignEnd="@+id/TV3" />
-
-    <TextView
-        android:text="Last result:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
-        android:id="@+id/TV3"
-        android:layout_below="@+id/TV1"
-        android:layout_alignStart="@+id/TV1"
-        android:layout_alignEnd="@+id/TV1" />
-
-    <TextView
-        android:text="Arrêté"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/TV1"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="99dp"
-        android:id="@+id/TV2" />
-
-    <TextView
-        android:text="Text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/TV4"
-        android:layout_alignBaseline="@+id/TV3"
-        android:layout_alignBottom="@+id/TV3"
-        android:layout_alignStart="@+id/TV2" />
-
-    <TextView
-        android:text="Text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/TV6"
-        android:layout_alignBaseline="@+id/TV5"
-        android:layout_alignBottom="@+id/TV5"
-        android:layout_alignStart="@+id/TV4" />
+        android:layout_below="@+id/checkBox"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/notifButton" />
 
     <ToggleButton
         android:text="ToggleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="45dp"
+        android:layout_marginEnd="18dp"
+        android:id="@+id/settingsButton"
+        android:layout_below="@+id/checkBox"
+        android:layout_alignParentEnd="true" />
+
+    <ToggleButton
+        android:text="ToggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="63dp"
-        android:id="@+id/Btn1" />
-
-    <ToggleButton
-        android:text="ToggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/Btn1"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="53dp"
-        android:id="@+id/Btn2" />
+        android:id="@+id/serviceButton"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/checkBox"
+        android:layout_marginEnd="21dp" />
 
     <CheckBox
         android:text="Start on boot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/Btn1"
-        android:layout_toStartOf="@+id/Btn2"
-        android:layout_marginBottom="37dp"
-        android:id="@+id/checkBox" />
+        android:layout_marginBottom="94dp"
+        android:id="@+id/checkBox"
+        android:layout_above="@+id/serviceButton"
+        android:layout_alignStart="@+id/notifButton" />
+
+    <TextView
+        android:text="Service"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/serviceButton"
+        android:layout_alignEnd="@+id/serviceButton"
+        android:layout_marginEnd="13dp"
+        android:layout_marginBottom="17dp"
+        android:id="@+id/serviceText"
+        tools:text="Service" />
+
+    <TextView
+        android:text="Notifications"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/serviceText"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/notifText"
+        tools:text="Notifications" />
+
+    <TextView
+        android:text="Settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/notifText"
+        android:layout_toEndOf="@+id/title"
+        android:id="@+id/settingsText"
+        tools:text="Settings" />
+
+    <TextView
+        android:text="Relevé des motes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:id="@+id/title"
+        tools:text="Relevé des motes"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/serviceText" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="86dp"
+        android:id="@+id/moteText"
+        android:layout_below="@+id/title"
+        android:layout_alignStart="@+id/notifText" />
 
 </RelativeLayout>
