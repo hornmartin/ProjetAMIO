@@ -61,9 +61,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Button mailButton = (Button) findViewById(R.id.mailButton);
+
         mailButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                String mail_adress = sharedPref.getString("mail", "malo.boixel@telecomnancy.net");
                 TextView moteText = (TextView) findViewById(R.id.mote1);
                 String textMote = moteText.getText().toString()+"\n";
                 moteText = (TextView) findViewById(R.id.mote2);
@@ -81,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 //emailIntent.setType("text/plain");
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Economie d'énergie");
                 emailIntent.putExtra(Intent.EXTRA_TEXT, textMote);
-                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"malo.boixel@telecomnancy.net"});
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {mail_adress});
                 startActivity(Intent.createChooser(emailIntent, "Send mail..."));
             }
         });
