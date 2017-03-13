@@ -162,7 +162,14 @@ public class Mote implements Parcelable{
             result+=" may be on ";
         else
             result+=" is "+onOff;
-        result+=" since "+since+" seconds\n";
+        if(since<60)
+            result+=" since "+since+" seconds\n";
+        else if(since<3600)
+            result+=" since "+since/60+" minutes\n";
+        else if(since<24*3600)
+            result+=" since "+since/3600+" hours\n";
+        else
+            result+=" since "+since/(24*3600)+" days\n";
         if(conditionsMatched.length()>0)
             result+=conditionsMatched+" conditions have been matched";
         result+= lastValue +" lm measured the "+sdf.format(new Date(lastUpdate*1000));

@@ -155,7 +155,6 @@ public class WebService extends Service {
         TimeConditon condition;
         for(int i=0;i<NUMBER_OF_WINDOWS;i++){
             condition=conditions.get(i);
-
             name = sharedPref.getString("window"+i,"default");
             condition.withName(name);
             if(name.equals("default"))
