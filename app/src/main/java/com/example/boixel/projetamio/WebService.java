@@ -155,7 +155,6 @@ public class WebService extends Service {
         TimeConditon condition;
         for(int i=0;i<NUMBER_OF_WINDOWS;i++){
             condition=conditions.get(i);
-
             name = sharedPref.getString("window"+i,"default");
             condition.withName(name);
             if(name.equals("default"))
@@ -177,6 +176,8 @@ public class WebService extends Service {
                 JSONObject obj = data.getJSONObject(i);
 
                 timestamp = obj.getLong("timestamp");
+                while(timestamp>9999999999L)    //timestamp in seconds
+                    timestamp/=1000;
                 value = obj.getDouble("value");
                 mote = obj.getString("mote");
 
