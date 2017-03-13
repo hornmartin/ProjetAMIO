@@ -91,27 +91,40 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             //put here whaterver you want your activity to do with the intent received
+            Intent i = getIntent();
+            Mote mote = (Mote) i.getParcelableExtra("mote");
+            TextView moteText;
+            switch(mote.getAddress()){
+                case "9.138":
+                    moteText = (TextView) findViewById(R.id.mote1);
+                    moteText.setText("Mote 9.138 "+mote.getValue());
+                    break;
+                case "81.77":
+                    moteText = (TextView) findViewById(R.id.mote2);
+                    moteText.setText("Mote 81.77 "+mote.getValue());
+                    break;
+                case "153.111":
+                    moteText = (TextView) findViewById(R.id.mote3);
+                    moteText.setText("Mote 153.11 "+mote.getValue());
+                    break;
+                case "53.105":
+                    moteText = (TextView) findViewById(R.id.mote4);
+                    moteText.setText("Mote 53.105 "+mote.getValue());
+                    moteText.setTextColor(7);
+                    break;
+                case "77.106":
+                    moteText = (TextView) findViewById(R.id.mote5);
+                    moteText.setText("Mote 77.106 "+mote.getValue());
+                    moteText.setTextColor(3);
+                    break;
+                default:
+                    break;
+            }
             String mote_data = intent.getStringExtra("data");
             Log.d("json", mote_data);
             parseJSON(mote_data);
-            TextView mote1 = (TextView) findViewById(R.id.mote1);
-            mote1.setText("Mote 9.138 "+moteDataList.get("9.138").get("value"));
-            TextView mote2 = (TextView) findViewById(R.id.mote2);
-            mote2.setText("Mote 81.77 "+moteDataList.get("81.77").get("value"));
-            TextView mote3 = (TextView) findViewById(R.id.mote3);
-            mote3.setText("Mote 153.11 "+moteDataList.get("153.111").get("value"));
-            TextView mote4 = (TextView) findViewById(R.id.mote4);
-            mote4.setText("Mote 53.105 "+moteDataList.get("53.105").get("value"));
-            TextView mote5 = (TextView) findViewById(R.id.mote5);
-            mote5.setText("Mote 77.106 "+moteDataList.get("77.106").get("value"));
-
-            Date d =  new Date(parseLong(moteDataList.get("77.106").get("timestamp")));
-
-            mote1.setTextColor(3);
-            mote2.setTextColor(7);
 
             TextView time = (TextView) findViewById(R.id.timestamp);
-            time.setText(d.toString().substring(0,19));
         }
     };
 
