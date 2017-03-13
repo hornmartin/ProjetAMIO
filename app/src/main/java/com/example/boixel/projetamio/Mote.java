@@ -3,11 +3,6 @@ package com.example.boixel.projetamio;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
-
-/**
- * Created by martin on 13/03/2017.
- */
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
