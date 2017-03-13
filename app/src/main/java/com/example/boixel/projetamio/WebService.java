@@ -164,7 +164,12 @@ public class WebService extends Service {
                 mote = obj.getString("mote");
 
                 if(motes.containsKey(mote))
-                    motes.get(mote).addMeasure(value, timestamp);
+                    motes.get(mote).withMeasure(value, timestamp);
+                else
+                    motes.put(mote,new Mote(mote).withMeasure(value,timestamp));
+            }
+            for(Mote m : motes.values()){
+                m.updateStatus();
             }
         }catch (JSONException e) {
             e.printStackTrace();
