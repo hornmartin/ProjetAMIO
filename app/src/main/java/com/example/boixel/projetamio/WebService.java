@@ -53,6 +53,7 @@ public class WebService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        int update_period = Integer.parseInt(sharedPref.getString("update", "10"));
         Log.d("WebService", "Service web lancé!");
         conditions = new ArrayList<>();
         updateConditions();
@@ -60,7 +61,7 @@ public class WebService extends Service {
         new getData().execute("http://iotlab.telecomnancy.eu/rest/data/1/light1/10");
         myTask = new MyTimerTask();
         myTimer = new Timer();
-        myTimer.schedule(myTask, 3000, 3000);
+        myTimer.schedule(myTask, update_period*1000, update_period*1000);
         return START_STICKY;
     }
 
