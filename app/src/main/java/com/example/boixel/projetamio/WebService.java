@@ -1,10 +1,18 @@
 package com.example.boixel.projetamio;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
@@ -25,21 +33,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class WebService extends Service {
-
+    private static final int NUMBER_OF_WINDOWS=3;
     private Timer myTimer;
     private MyTimerTask myTask;
     private ArrayList<TimeConditon> conditions;
     private HashMap<String,Mote> motes;
+    private SharedPreferences sharedPref;
+    private static final String[] days = {"monday","tuesday","wednesday","thursday","friday","saturday","sunday"};
+
 
     public WebService() {
-    }
-
-    private void sendBroadcast (ArrayList<HashMap<String, String>> moteDataList, String json){
-        Intent intent = new Intent ("value"); //put the same message as in the filter you used in the activity when registering the receiver
-        intent.putExtra("light_value1", moteDataList.get(moteDataList.size()-2).get("value"));
-        intent.putExtra("light_value2", moteDataList.get(moteDataList.size()-1).get("value"));
-        intent.putExtra("data", json);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     @Nullable
@@ -49,12 +52,12 @@ public class WebService extends Service {
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         Log.d("WebService", "Service web lancé!");
         conditions = new ArrayList<>();
         updateConditions();
         motes = new HashMap<>();
-
-
+        new getData().execute("http://iotlab.telecomnancy.eu/rest/data/1/light1/10");
         myTask = new MyTimerTask();
         myTimer = new Timer();
         myTimer.schedule(myTask, 3000, 3000);
@@ -63,8 +66,6 @@ public class WebService extends Service {
 
     class MyTimerTask extends TimerTask {
         public void run() {
-            URL url;
-            HttpURLConnection urlConnection = null;
             new getData().execute("http://iotlab.telecomnancy.eu/rest/data/1/light1/last");
         }
     }
@@ -117,6 +118,7 @@ public class WebService extends Service {
             Log.e("Response", "" + server_response);
             if (server_response != null){
                 updateMotes(server_response);
+                checkNotificationCondition();
             }
         }
 
@@ -146,7 +148,21 @@ public class WebService extends Service {
     }
 
     private void updateConditions(){
+        while(conditions.size()<NUMBER_OF_WINDOWS)
+            conditions.add(new TimeConditon("plage"+conditions.size()));
+        String name;
+        TimeConditon condition;
+        for(int i=0;i<NUMBER_OF_WINDOWS;i++){
+            condition=conditions.get(i);
 
+            name = sharedPref.getString("window"+i,"default");
+            condition.withName(name);
+            if(name.equals("default"))
+                Log.d("WebService","title fail");
+            for(String d : days)
+                if(sharedPref.getBoolean(d+i,false))
+                    condition.withDay(d);
+        }
     }
 
     private void updateMotes(String json){
@@ -177,6 +193,76 @@ public class WebService extends Service {
     }
 
     private void checkNotificationCondition(){
+        Log.d("Web Service","check");
+        boolean notify;
+        for(Mote m : motes.values()){
+            notify = false;
+            for(TimeConditon t : conditions){
+                if(t.checkMote(m))
+                    notify=true;
+            }
+            if(notify)
+                notify(m);
+            sendBroadcast(m);
+        }
+    }
+
+
+
+    private void sendBroadcast (Mote mote){
+        Log.d("Web Service","broadcast");
+        Intent intent = new Intent (MainActivity.RECEIVE_MOTE_INFO); //put the same message as in the filter you used in the activity when registering the receiver
+        intent.putExtra("mote", mote);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+
+    public void notify(Mote mote){
+        NotificationCompat.Builder mBuilder =
+                (NotificationCompat.Builder) new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_action_name)
+                        .setContentTitle("A light is on")
+                        .setContentText(mote.toString());
+
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, MainActivity.class);
+
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(MainActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // mId allows you to update the notification later on.
+        int mId = 3;
+        mNotificationManager.notify(mId, mBuilder.build());
+    }
+
+
+    public class BootBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Boolean checkBoxState = sharedPref.getBoolean("checkBoxState", false);
+            Log.d("CheckBoxStatus", checkBoxState.toString());
+            if(checkBoxState){
+
+                if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)){
+                    Intent i = new Intent(context, MainActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(i);
+                }
+            }
+
+        }
+
     }
 }
 

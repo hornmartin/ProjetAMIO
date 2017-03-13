@@ -1,35 +1,22 @@
 package com.example.boixel.projetamio;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.content.Intent;
 import android.view.View;
 import android.widget.*;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-
 import static java.lang.Long.parseLong;
 
 public class MainActivity extends AppCompatActivity {
-    HashMap<String,HashMap<String, String>> moteDataList = new HashMap<String,HashMap<String, String>>();
+    public static final String RECEIVE_MOTE_INFO = "RECEIVE_MOTE_INFO";
     SharedPreferences sharedPref;
 
     @Override
@@ -87,76 +74,51 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private BroadcastReceiver bReceiver = new BroadcastReceiver(){
-
         @Override
         public void onReceive(Context context, Intent intent) {
             //put here whaterver you want your activity to do with the intent received
-            Intent i = getIntent();
-            Mote mote = (Mote) i.getParcelableExtra("mote");
+            //Intent i = getIntent();
+            if(!intent.getAction().equals(RECEIVE_MOTE_INFO)){
+                return;
+            }
+            Mote mote = intent.getParcelableExtra("mote");
             TextView moteText;
             switch(mote.getAddress()){
                 case "9.138":
                     moteText = (TextView) findViewById(R.id.mote1);
-                    moteText.setText("Mote 9.138 "+mote.getValue());
+                    moteText.setText(/*"Mote 9.138 "+mote.getLastValue()*/mote.toString());
                     break;
                 case "81.77":
                     moteText = (TextView) findViewById(R.id.mote2);
-                    moteText.setText("Mote 81.77 "+mote.getValue());
+                    moteText.setText("Mote 81.77 "+mote.getLastValue());
                     break;
                 case "153.111":
                     moteText = (TextView) findViewById(R.id.mote3);
-                    moteText.setText("Mote 153.11 "+mote.getValue());
+                    moteText.setText("Mote 153.11 "+mote.getLastValue());
                     break;
                 case "53.105":
                     moteText = (TextView) findViewById(R.id.mote4);
-                    moteText.setText("Mote 53.105 "+mote.getValue());
+                    moteText.setText("Mote 53.105 "+mote.getLastValue());
                     moteText.setTextColor(7);
                     break;
                 case "77.106":
                     moteText = (TextView) findViewById(R.id.mote5);
-                    moteText.setText("Mote 77.106 "+mote.getValue());
+                    moteText.setText("Mote 77.106 "+mote.getLastValue());
                     moteText.setTextColor(3);
                     break;
                 default:
                     break;
             }
-            String mote_data = intent.getStringExtra("data");
-            Log.d("json", mote_data);
-            parseJSON(mote_data);
-
             TextView time = (TextView) findViewById(R.id.timestamp);
         }
     };
 
-    private void parseJSON(String str){
-        try {
-            JSONObject reader = new JSONObject(str);
-            JSONArray data = reader.getJSONArray("data");
-            for(int i = 0; i < data.length(); i++){
-                JSONObject obj = data.getJSONObject(i);
-
-                String timestamp = obj.getString("timestamp");
-                String label = obj.getString("label");
-                String value = obj.getString("value");
-                String mote = obj.getString("mote");
-
-                HashMap<String, String> mote_data = new HashMap<>();
-
-                mote_data.put("timestamp", timestamp);
-                mote_data.put("label", label);
-                mote_data.put("value", value);
-                //mote_data.put("mote", mote);
-
-                moteDataList.put(mote, mote_data);
-            }
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     protected void onResume(){
         super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(bReceiver, new IntentFilter("value"));
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(RECEIVE_MOTE_INFO);
+        LocalBroadcastManager.getInstance(this).registerReceiver(bReceiver, intentFilter);
     }
 
     protected void onPause (){
@@ -164,37 +126,7 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(bReceiver);
     }
 
-    public void onLightChange(){
-        NotificationCompat.Builder mBuilder =
-                (NotificationCompat.Builder) new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_action_name)
-                        .setContentTitle("Alerte lumière!")
-                        .setContentText("Une lampe est restée allumée!");
-        // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, MainActivity.class);
-
-        // The stack builder object will contain an artificial back stack for the
-        // started Activity.
-        // This ensures that navigating backward from the Activity leads out of
-     // your application to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-     // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(MainActivity.class);
-        // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-// mId allows you to update the notification later on.
-        int mId = 3;
-        mNotificationManager.notify(mId, mBuilder.build());
-    }
-
+    /*
     public class MyBroadcastReceiver extends BroadcastReceiver{
 
         @Override
@@ -214,4 +146,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+    */
 }

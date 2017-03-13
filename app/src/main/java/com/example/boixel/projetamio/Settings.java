@@ -29,7 +29,7 @@ public class Settings extends PreferenceActivity implements TimePickerDialog.OnT
         Log.d("settings","settings");
         addPreferencesFromResource(R.xml.preferences);
 
-        Preference beginHour = (Preference) findPreference("beginHour");
+        Preference beginHour = (Preference) findPreference("beginHour1");
         beginHour.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @TargetApi(Build.VERSION_CODES.HONEYCOMB)
             @Override
@@ -39,7 +39,7 @@ public class Settings extends PreferenceActivity implements TimePickerDialog.OnT
             }
         });
 
-        Preference endHour = (Preference) findPreference("endHour");
+        Preference endHour = (Preference) findPreference("endHour1");
         endHour.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @TargetApi(Build.VERSION_CODES.HONEYCOMB)
             @Override
@@ -51,7 +51,7 @@ public class Settings extends PreferenceActivity implements TimePickerDialog.OnT
     }
 
     @Override
-    public void onTimeSet(TimePicker timePicker, int i, int i2) {
+    public void onTimeSet(TimePicker timePicker, int hours, int minutes) {
     }
 
     private void showTimeDialog(){

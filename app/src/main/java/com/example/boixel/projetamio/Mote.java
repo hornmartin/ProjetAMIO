@@ -1,10 +1,12 @@
 package com.example.boixel.projetamio;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 /**
  * Created by boixel on 13/03/2017.
@@ -18,17 +20,19 @@ public class Mote implements Parcelable{
     private String address;
     private String onOff;
     private long since;
-    private String notif;
-    private double value;
+    private String conditionsMatched;
+    private double lastValue;
     private long lastUpdate;
     private boolean hasChange;
+    private long updateDeltaInSeconds;
 
     public LinkedList<Measure> measures;
 
     public Mote(String address){
         this.address = address;
         measures = new LinkedList<>();
-        onOff = "off";
+        onOff = "undecided";
+        conditionsMatched ="";
     }
 
     public String getAddress(){
@@ -43,12 +47,18 @@ public class Mote implements Parcelable{
         return since;
     }
 
-    public String getNotif(){
-        return notif;
+    public void addConditionsMatched(TimeConditon condition){
+        this.conditionsMatched +=condition.getName()+",";
     }
 
-    public double getValue(){
-        return value;
+    public String getConditionsMatched(){
+        if(conditionsMatched.length()>0)
+            return conditionsMatched.substring(0, conditionsMatched.length()-1);
+        return "";
+    }
+
+    public double getLastValue(){
+        return lastValue;
     }
 
     public long getLastUpdate(){
@@ -69,9 +79,9 @@ public class Mote implements Parcelable{
         out.writeString(address);
         out.writeString(onOff);
         out.writeLong(since);
-        out.writeDouble(value);
+        out.writeDouble(lastValue);
         out.writeLong(lastUpdate);
-        out.writeString(notif);
+        out.writeString(conditionsMatched);
     }
 
     // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
@@ -90,40 +100,70 @@ public class Mote implements Parcelable{
         address = in.readString();
         onOff = in.readString();
         since = in.readLong();
-        value = in.readDouble();
+        lastValue = in.readDouble();
         lastUpdate = in.readLong();
-        notif = in.readString();
+        conditionsMatched = in.readString();
+        updateDeltaInSeconds = 0;
     }
 
     public Mote withMeasure(double value, long timestamp){
-        if(measures.size() < MAX_MEASURES){
+        updateDeltaInSeconds = 0;
+        int size = measures.size();
+        Log.d("Web Service","Adding measure to a "+size+" list");
+        if(size < MAX_MEASURES){
             measures.add(new Measure(value,timestamp));
             Collections.sort(measures);
+            if(size>0)
+                if(measures.getLast().getTimestamp()<measures.get(size-1).getTimestamp())
+            Log.d("WebService", "tu sais pas compter");
         } else {
-            if (timestamp > measures.getLast().getTimestamp()) {
+            updateDeltaInSeconds = timestamp - measures.getLast().getTimestamp();
+            Log.d("Web Service","no new measures : "+timestamp+":"+measures.getLast().getTimestamp());
+            if (updateDeltaInSeconds>0) {
                 measures.removeFirst();
                 measures.add(new Measure(value, timestamp));
+            } else {
+                updateDeltaInSeconds=0;
             }
         }
-        value = measures.getLast().getValue();
+        this.lastValue = measures.getLast().getValue();
         lastUpdate = measures.getLast().getTimestamp();
         return this;
     }
 
-    public boolean updateStatus() {
+    public void updateStatus() {
         hasChange = (Math.abs(measures.getLast().getValue()-measures.get(measures.size()-2).getValue())>CHANGE_GAP);
-        onOff = "undecided";
+        String localOnOff = "undecided";
         if(measures.getLast().getValue()>ON_OFF_THRESHOLD)
-            onOff="on";
+            localOnOff="on";
         else if(measures.getLast().getValue()<OFF_ON_THRESHOLD)
-            onOff="off";
-        return hasChange;
+            localOnOff="off";
+        if(updateDeltaInSeconds>0) {
+            if (localOnOff.equals(onOff))
+                since+=updateDeltaInSeconds;
+            else
+                since=0;
+            conditionsMatched = "";
+        }
     }
 
     public boolean hasChange(){
-        boolean result = hasChange;
-        hasChange = false;
-        return  result;
+        return  hasChange;
+    }
+
+    @Override
+    public String toString(){
+        String result ="Light near mote ";
+        result+=address;
+        if(onOff.equals("undecided"))
+            result+=" may be on ";
+        else
+            result+=" is "+onOff;
+        result+=" since "+since+" seconds\n";
+        if(conditionsMatched.length()>0)
+            result+=conditionsMatched+" conditions have been matched";
+        result+= lastValue +" lm measured the "+(new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss")).format(new Date(lastUpdate));
+        return result;
     }
 
     public class Measure implements Comparable<Measure> {
