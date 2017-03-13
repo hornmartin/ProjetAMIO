@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         editor.putInt("beginHours1", 23*60);
         editor.putInt("endHours2", 23*60);
         editor.putInt("beginHours2", 19*60);
+        editor.putString("update", "10");
         editor.commit();
 
         ToggleButton serviceButton = (ToggleButton) findViewById(R.id.serviceButton);
