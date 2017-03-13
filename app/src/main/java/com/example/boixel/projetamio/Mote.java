@@ -8,8 +8,6 @@ import java.util.LinkedList;
  * Created by martin on 13/03/2017.
  */
 
-public class Mote {
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -18,7 +16,7 @@ import android.os.Parcelable;
  */
 
 public class Mote implements Parcelable{
-    private int id;
+    private String address;
     private boolean isOn;
     private long since;
     private boolean notif;
@@ -32,8 +30,8 @@ public class Mote implements Parcelable{
         measures = new LinkedList<>();
     }
 
-    public int getId(){
-        return id;
+    public String getAddress(){
+        return address;
     }
 
     public boolean getisOn(){
@@ -67,7 +65,7 @@ public class Mote implements Parcelable{
     // write your object's data to the passed-in Parcel
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeInt(id);
+        out.writeString(address);
     }
 
     // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
@@ -83,7 +81,7 @@ public class Mote implements Parcelable{
 
     // example constructor that takes a Parcel and gives you an object populated with it's values
     private Mote(Parcel in) {
-        id = in.readInt();
+        address = in.readString();
     }
 
     public void addMeasure(double value, long timestamp){
@@ -99,11 +97,11 @@ public class Mote implements Parcelable{
     }
 
 
-    public class Measure implements Comparable<Measure>{
+    public class Measure implements Comparable<Measure> {
         double value;
         long timestamp;
 
-        public Measure(double value, long timestamp){
+        public Measure(double value, long timestamp) {
             this.value = value;
             this.timestamp = timestamp;
         }
@@ -118,6 +116,7 @@ public class Mote implements Parcelable{
 
         @Override
         public int compareTo(Measure o) {
-            return (int) (timestamp-o.getTimestamp());
+            return (int) (timestamp - o.getTimestamp());
         }
+    }
 }
