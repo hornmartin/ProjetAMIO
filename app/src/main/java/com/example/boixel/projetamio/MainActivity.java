@@ -17,7 +17,18 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.*;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+
+import static java.lang.Long.parseLong;
+
 public class MainActivity extends AppCompatActivity {
+    HashMap<String,HashMap<String, String>> moteDataList = new HashMap<String,HashMap<String, String>>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,26 +96,52 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             //put here whaterver you want your activity to do with the intent received
-            String value1 = intent.getStringExtra("light_value1");
-            String value2 = intent.getStringExtra("light_value2");
+            String mote_data = intent.getStringExtra("data");
+            Log.d("json", mote_data);
+            parseJSON(mote_data);
+            TextView mote1 = (TextView) findViewById(R.id.mote1);
+            mote1.setText("Mote 9.138 "+moteDataList.get("9.138").get("value"));
+            TextView mote2 = (TextView) findViewById(R.id.mote2);
+            mote2.setText("Mote 81.77 "+moteDataList.get("81.77").get("value"));
+            TextView mote3 = (TextView) findViewById(R.id.mote3);
+            mote3.setText("Mote 153.11 "+moteDataList.get("153.111").get("value"));
+            TextView mote4 = (TextView) findViewById(R.id.mote4);
+            mote4.setText("Mote 53.105 "+moteDataList.get("53.105").get("value"));
+            TextView mote5 = (TextView) findViewById(R.id.mote5);
+            mote5.setText("Mote 77.106 "+moteDataList.get("77.106").get("value"));
 
-            if(Float.parseFloat(value1) > 250){
-                Log.d("Data", "Lumière allumée (mote1)");
-                onLightChange();
+            Date d =  new Date(parseLong(moteDataList.get("77.106").get("timestamp")));
 
-            }else{
-                Log.d("Data", "Lumière éteinte (mote1)");
-                onLightChange();
-            }
-            if(Float.parseFloat(value2) > 250){
-                Log.d("Data", "Lumière allumée (mote2)");
-            }else{
-                Log.d("Data", "Lumière éteinte (mote2)");
-            }
-            TextView moteText = (TextView) findViewById(R.id.mote1);
-            moteText.setText("Mote 1 : "+value1+"\nMote 2 : "+value2);
+            TextView time = (TextView) findViewById(R.id.timestamp);
+            time.setText(d.toString().substring(0,19));
         }
     };
+
+    private void parseJSON(String str){
+        try {
+            JSONObject reader = new JSONObject(str);
+            JSONArray data = reader.getJSONArray("data");
+            for(int i = 0; i < data.length(); i++){
+                JSONObject obj = data.getJSONObject(i);
+
+                String timestamp = obj.getString("timestamp");
+                String label = obj.getString("label");
+                String value = obj.getString("value");
+                String mote = obj.getString("mote");
+
+                HashMap<String, String> mote_data = new HashMap<>();
+
+                mote_data.put("timestamp", timestamp);
+                mote_data.put("label", label);
+                mote_data.put("value", value);
+                //mote_data.put("mote", mote);
+
+                moteDataList.put(mote, mote_data);
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     protected void onResume(){
         super.onResume();

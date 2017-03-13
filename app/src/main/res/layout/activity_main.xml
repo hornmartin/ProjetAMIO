@@ -16,7 +16,9 @@
         android:layout_marginTop="46dp"
         android:id="@+id/mote1"
         android:layout_below="@+id/lastUpdate"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="No data"
+        tools:text="No data" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -24,7 +26,9 @@
         android:layout_marginTop="27dp"
         android:id="@+id/mote2"
         android:layout_below="@+id/mote1"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="No data"
+        tools:text="No data" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -32,7 +36,9 @@
         android:layout_marginTop="25dp"
         android:id="@+id/mote3"
         android:layout_below="@+id/mote2"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="No data"
+        tools:text="No data" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -40,7 +46,9 @@
         android:layout_marginTop="26dp"
         android:id="@+id/mote4"
         android:layout_below="@+id/mote3"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="No data"
+        tools:text="No data" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -48,16 +56,9 @@
         android:id="@+id/mote5"
         android:layout_marginTop="25dp"
         android:layout_below="@+id/mote4"
-        android:layout_centerHorizontal="true" />
-
-    <ToggleButton
-        android:text="ToggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/serviceButton"
-        android:layout_below="@+id/mote5"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="48dp" />
+        android:text="No data"
+        tools:text="No data" />
 
     <TextView
         android:text="Last update :"
@@ -69,13 +70,6 @@
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/serviceButton"
         android:layout_marginEnd="25dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/mote1"
-        android:layout_toEndOf="@+id/mote1"
-        android:id="@+id/timestamp" />
 
     <Button
         android:text="Send mail"
@@ -95,5 +89,23 @@
         tools:text="Settings"
         android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/mailButton" />
+
+    <ToggleButton
+        android:text="ToggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/serviceButton"
+        android:layout_marginTop="24dp"
+        android:layout_below="@+id/mote5"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/timestamp"
+        android:text="00:00:00"
+        tools:text="00:00:00"
+        android:layout_above="@+id/mote1"
+        android:layout_alignStart="@+id/serviceButton" />
 
 </RelativeLayout>

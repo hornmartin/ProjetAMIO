@@ -2,8 +2,22 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <EditTextPreference android:title="Email adress"
         android:key="mail"
-        android:summary="Please provide your email adresse"></EditTextPreference>
-    <EditTextPreference android:title="Hours range"
-        android:key="hours"
-        android:summary="Please provide the hours range"></EditTextPreference>
+        android:summary="Please provide your email adress"></EditTextPreference>
+    <EditTextPreference android:title="Update interval"
+        android:key="update"
+        android:summary="Please input the interval between the updates in seconds (default 10s)"></EditTextPreference>
+    <CheckBoxPreference android:title="Start on boot"
+        android:key="onBoot"></CheckBoxPreference>
+    <PreferenceScreen android:title="Hours range"
+        android:key="hours">
+        <CheckBoxPreference android:title="Weekdays"
+            android:key="weekdays"></CheckBoxPreference>
+        <CheckBoxPreference android:title="Week-end"
+            android:key="weekend"></CheckBoxPreference>
+        <CheckBoxPreference android:title="Notification if the light is on"
+            android:key="isOn"></CheckBoxPreference>
+        <CheckBoxPreference android:title="Notification on light change"
+            android:key="onChange"></CheckBoxPreference>
+    </PreferenceScreen>
+
 </PreferenceScreen>
