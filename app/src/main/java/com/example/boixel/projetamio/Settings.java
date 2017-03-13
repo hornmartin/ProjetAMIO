@@ -31,13 +31,14 @@ public class Settings extends PreferenceActivity implements TimePickerDialog.OnT
         super.onCreate(savedInstanceState);
         Log.d("settings","settings");
         addPreferencesFromResource(R.xml.preferences);
+        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
         Preference beginHour = (Preference) findPreference("beginHour1");
         beginHour.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @TargetApi(Build.VERSION_CODES.HONEYCOMB)
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                showTimeDialog();
+                showTimeDialog(sharedPref.getInt("beginHours1", 0));
                 picker = "begin1";
                 return false;
             }
@@ -48,7 +49,7 @@ public class Settings extends PreferenceActivity implements TimePickerDialog.OnT
             @TargetApi(Build.VERSION_CODES.HONEYCOMB)
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                showTimeDialog();
+                showTimeDialog(sharedPref.getInt("endHours1", 0));
                 picker = "end1";
                 return false;
             }
@@ -59,7 +60,7 @@ public class Settings extends PreferenceActivity implements TimePickerDialog.OnT
             @TargetApi(Build.VERSION_CODES.HONEYCOMB)
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                showTimeDialog();
+                showTimeDialog(sharedPref.getInt("beginHours2", 0));
                 picker = "begin2";
                 return false;
             }
@@ -70,7 +71,7 @@ public class Settings extends PreferenceActivity implements TimePickerDialog.OnT
             @TargetApi(Build.VERSION_CODES.HONEYCOMB)
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                showTimeDialog();
+                showTimeDialog(sharedPref.getInt("endHours2", 0));
                 picker = "end2";
                 return false;
             }
@@ -81,7 +82,7 @@ public class Settings extends PreferenceActivity implements TimePickerDialog.OnT
             @TargetApi(Build.VERSION_CODES.HONEYCOMB)
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                showTimeDialog();
+                showTimeDialog(sharedPref.getInt("beginHours3", 0));
                 picker = "begin3";
                 return false;
             }
@@ -92,7 +93,7 @@ public class Settings extends PreferenceActivity implements TimePickerDialog.OnT
             @TargetApi(Build.VERSION_CODES.HONEYCOMB)
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                showTimeDialog();
+                showTimeDialog(sharedPref.getInt("endHours3", 0));
                 picker = "end3";
                 return false;
             }
@@ -133,14 +134,19 @@ public class Settings extends PreferenceActivity implements TimePickerDialog.OnT
         }
     }
 
-    private void showTimeDialog(){
+    private void showTimeDialog(int hours){
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String test = sharedPref.getString("beginHour1", "truc");
         Log.d("all", sharedPref.getAll().toString());
         calendar = Calendar.getInstance();
-
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int min = calendar.get(Calendar.MINUTE);
+        int hour;
+        int min;
+        if(hours == 0) {
+            hour = calendar.get(Calendar.HOUR_OF_DAY);
+            min = calendar.get(Calendar.MINUTE);
+        }else {
+            min = hours % 60;
+            hour = (hours - (hours % 60))/60;
+        }
         new TimePickerDialog(this, this, hour, min, true).show();
 
     }
