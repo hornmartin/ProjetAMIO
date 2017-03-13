@@ -19,7 +19,7 @@ public class Mote implements Parcelable{
     private String address;
     private boolean isOn;
     private long since;
-    private boolean notif;
+    private String notif;
     private double value;
     private long lastUpdate;
 
@@ -42,7 +42,7 @@ public class Mote implements Parcelable{
         return since;
     }
 
-    public boolean getNotif(){
+    public String getNotif(){
         return notif;
     }
 
