@@ -107,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
 
             Date d =  new Date(parseLong(moteDataList.get("77.106").get("timestamp")));
 
+            mote1.setTextColor(3);
+            mote2.setTextColor(7);
+
             TextView time = (TextView) findViewById(R.id.timestamp);
             time.setText(d.toString().substring(0,19));
         }
