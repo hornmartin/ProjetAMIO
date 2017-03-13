@@ -61,24 +61,12 @@
         tools:text="No data" />
 
     <TextView
-        android:text="Last update :"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:id="@+id/lastUpdate"
-        tools:text="Last update :"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/serviceButton"
-        android:layout_marginEnd="25dp" />
-
-    <Button
-        android:text="Send mail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
-        android:id="@+id/mailButton"
-        tools:text="Send mail"
-        android:layout_below="@+id/serviceButton"
+        android:id="@+id/timestamp"
+        android:text="00:00:00"
+        tools:text="00:00:00"
+        android:layout_above="@+id/mote1"
         android:layout_alignStart="@+id/serviceButton" />
 
     <Button
@@ -88,24 +76,25 @@
         android:id="@+id/settingsButton"
         tools:text="Settings"
         android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/mailButton" />
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:text="Send mail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/mailButton"
+        tools:text="Send mail"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
 
     <ToggleButton
         android:text="ToggleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/serviceButton"
-        android:layout_marginTop="24dp"
-        android:layout_below="@+id/mote5"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/timestamp"
-        android:text="00:00:00"
-        tools:text="00:00:00"
-        android:layout_above="@+id/mote1"
-        android:layout_alignStart="@+id/serviceButton" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textOn="Service is on"
+        android:textOff="Service is off"/>
 
 </RelativeLayout>

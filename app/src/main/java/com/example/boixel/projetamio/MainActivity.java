@@ -13,16 +13,31 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.*;
 
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
+
 import static java.lang.Long.parseLong;
 
 public class MainActivity extends AppCompatActivity {
     public static final String RECEIVE_MOTE_INFO = "RECEIVE_MOTE_INFO";
+    private HashMap<String, Integer> motes;
+    private ArrayList<Integer> views;
     SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        motes = new HashMap<>();
+        views = new ArrayList<>();
+        views.add(R.id.mote1);
+        views.add(R.id.mote2);
+        views.add(R.id.mote3);
+        views.add(R.id.mote4);
+        views.add(R.id.mote5);
         setContentView(R.layout.activity_main);
         Log.d("MainActivity", "Creation de l'activité");
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
@@ -81,12 +96,27 @@ public class MainActivity extends AppCompatActivity {
             if(!intent.getAction().equals(RECEIVE_MOTE_INFO)){
                 return;
             }
+
             Mote mote = intent.getParcelableExtra("mote");
+            int i;
+            if(motes.containsKey(mote.getAddress())){
+                i = motes.get(mote.getAddress());
+            } else {
+                if(motes.values().size()>views.size()){
+                    i = new Random(views.size()).nextInt();
+                } else {
+                    i = motes.values().size();
+                }
+                motes.put(mote.getAddress(),i);
+            }
+            Log.d("WebService",i+"");
+            ((TextView)findViewById(views.get(i))).setText(mote.toString());
+            /*
             TextView moteText;
             switch(mote.getAddress()){
                 case "9.138":
                     moteText = (TextView) findViewById(R.id.mote1);
-                    moteText.setText(/*"Mote 9.138 "+mote.getLastValue()*/mote.toString());
+                    moteText.setText(/*"Mote 9.138 "+mote.getLastValue()mote.toString());
                     break;
                 case "81.77":
                     moteText = (TextView) findViewById(R.id.mote2);
@@ -109,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 default:
                     break;
             }
+        */
             TextView time = (TextView) findViewById(R.id.timestamp);
         }
     };

@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.TimeZone;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -25,6 +27,7 @@ public class Mote implements Parcelable{
     private long lastUpdate;
     private boolean hasChange;
     private long updateDeltaInSeconds;
+    private SimpleDateFormat sdf;
 
     public LinkedList<Measure> measures;
 
@@ -33,6 +36,8 @@ public class Mote implements Parcelable{
         measures = new LinkedList<>();
         onOff = "undecided";
         conditionsMatched ="";
+        sdf=new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("CET"));
     }
 
     public String getAddress(){
@@ -109,17 +114,14 @@ public class Mote implements Parcelable{
     public Mote withMeasure(double value, long timestamp){
         updateDeltaInSeconds = 0;
         int size = measures.size();
-        Log.d("Web Service","Adding measure to a "+size+" list");
         if(size < MAX_MEASURES){
             measures.add(new Measure(value,timestamp));
             Collections.sort(measures);
-            if(size>0)
-                if(measures.getLast().getTimestamp()<measures.get(size-1).getTimestamp())
-            Log.d("WebService", "tu sais pas compter");
         } else {
             updateDeltaInSeconds = timestamp - measures.getLast().getTimestamp();
-            Log.d("Web Service","no new measures : "+timestamp+":"+measures.getLast().getTimestamp());
             if (updateDeltaInSeconds>0) {
+                Log.d("Web Service","new measures : "+timestamp+":"+measures.getLast().getTimestamp());
+
                 measures.removeFirst();
                 measures.add(new Measure(value, timestamp));
             } else {
@@ -145,6 +147,7 @@ public class Mote implements Parcelable{
                 since=0;
             conditionsMatched = "";
         }
+        onOff=localOnOff;
     }
 
     public boolean hasChange(){
@@ -162,7 +165,8 @@ public class Mote implements Parcelable{
         result+=" since "+since+" seconds\n";
         if(conditionsMatched.length()>0)
             result+=conditionsMatched+" conditions have been matched";
-        result+= lastValue +" lm measured the "+(new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss")).format(new Date(lastUpdate));
+        result+= lastValue +" lm measured the "+sdf.format(new Date(lastUpdate*1000));
+        Log.d("last update",lastUpdate+"");
         return result;
     }
 

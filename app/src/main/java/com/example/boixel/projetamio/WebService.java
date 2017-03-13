@@ -176,6 +176,8 @@ public class WebService extends Service {
                 JSONObject obj = data.getJSONObject(i);
 
                 timestamp = obj.getLong("timestamp");
+                while(timestamp>9999999999L)    //timestamp in seconds
+                    timestamp/=1000;
                 value = obj.getDouble("value");
                 mote = obj.getString("mote");
 
