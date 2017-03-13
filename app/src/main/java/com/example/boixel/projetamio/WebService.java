@@ -28,6 +28,8 @@ public class WebService extends Service {
 
     private Timer myTimer;
     private MyTimerTask myTask;
+    private ArrayList<TimeConditon> conditions;
+    private HashMap<String,Mote> motes;
 
     public WebService() {
     }
@@ -48,6 +50,11 @@ public class WebService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("WebService", "Service web lancé!");
+        conditions = new ArrayList<>();
+        updateConditions();
+        motes = new HashMap<>();
+
+
         myTask = new MyTimerTask();
         myTimer = new Timer();
         myTimer.schedule(myTask, 3000, 3000);
@@ -73,7 +80,6 @@ public class WebService extends Service {
     private class getData extends AsyncTask<String , Void ,String> {
         String server_response;
         int responseCode = 0;
-        ArrayList<HashMap<String, String>> moteDataList = new ArrayList<HashMap<String, String>>();
 
         @Override
         protected String doInBackground(String... strings) {
@@ -110,37 +116,10 @@ public class WebService extends Service {
             }
             Log.e("Response", "" + server_response);
             if (server_response != null){
-                parseJSON(server_response);
-            }
-            WebService service = new WebService();
-            service.sendBroadcast(moteDataList, server_response);
-        }
-
-        private void parseJSON(String str){
-            try {
-                JSONObject reader = new JSONObject(str);
-                JSONArray data = reader.getJSONArray("data");
-                for(int i = 0; i < data.length(); i++){
-                    JSONObject obj = data.getJSONObject(i);
-
-                    String timestamp = obj.getString("timestamp");
-                    String label = obj.getString("label");
-                    String value = obj.getString("value");
-                    String mote = obj.getString("mote");
-
-                    HashMap<String, String> mote_data = new HashMap<>();
-
-                    mote_data.put("timestamp", timestamp);
-                    mote_data.put("label", label);
-                    mote_data.put("value", value);
-                    mote_data.put("mote", mote);
-
-                    moteDataList.add(mote_data);
-                }
-            }catch (JSONException e) {
-                e.printStackTrace();
+                updateMotes(server_response);
             }
         }
+
 
         private String readStream(InputStream in) {
             BufferedReader reader = null;
@@ -164,6 +143,35 @@ public class WebService extends Service {
             }
             return response.toString();
         }
+    }
+
+    private void updateConditions(){
+
+    }
+
+    private void updateMotes(String json){
+        try {
+            JSONObject reader = new JSONObject(json);
+            JSONArray data = reader.getJSONArray("data");
+            long timestamp;
+            String mote;
+            double value;
+            for(int i = 0; i < data.length(); i++){
+                JSONObject obj = data.getJSONObject(i);
+
+                timestamp = obj.getLong("timestamp");
+                value = obj.getDouble("value");
+                mote = obj.getString("mote");
+
+                if(motes.containsKey(mote))
+                    motes.get(mote).addMeasure(value, timestamp);
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void checkNotificationCondition(){
     }
 }
 
