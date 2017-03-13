@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,12 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MainActivity", "Creation de l'activité");
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("endHours1", 6*60);
+        editor.putInt("beginHours1", 23*60);
+        editor.putInt("endHours2", 23*60);
+        editor.putInt("beginHours2", 19*60);
+        editor.commit();
 
         ToggleButton serviceButton = (ToggleButton) findViewById(R.id.serviceButton);
         serviceButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
@@ -57,20 +64,29 @@ public class MainActivity extends AppCompatActivity {
         mailButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                TextView moteText = (TextView) findViewById(R.id.mote1);
+                String textMote = moteText.getText().toString()+"\n";
+                moteText = (TextView) findViewById(R.id.mote2);
+                textMote += moteText.getText().toString()+"\n";
+                moteText = (TextView) findViewById(R.id.mote3);
+                textMote += moteText.getText().toString()+"\n";
+                moteText = (TextView) findViewById(R.id.mote4);
+                textMote += moteText.getText().toString()+"\n";
+                moteText = (TextView) findViewById(R.id.mote5);
+                textMote += moteText.getText().toString()+"\n";
                 Log.d("mail", "button");
                 Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                //emailIntent.setData(Uri.parse("mailto:meskhen@gmail.com"));
+                //emailIntent.setData(Uri.parse("mailto:"));
                 emailIntent.setType("message/rfc822");
                 //emailIntent.setType("text/plain");
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
-                emailIntent.putExtra(Intent.EXTRA_TEXT, "Body");
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Economie d'énergie");
+                emailIntent.putExtra(Intent.EXTRA_TEXT, textMote);
                 emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"malo.boixel@telecomnancy.net"});
                 startActivity(Intent.createChooser(emailIntent, "Send mail..."));
             }
         });
 
-        Boolean checkBoxState = sharedPref.getBoolean("onBoot", false);
-        Log.d("CheckBoxStatus", checkBoxState.toString());
+        Log.d("all", sharedPref.getAll().toString());
     }
 
     private BroadcastReceiver bReceiver = new BroadcastReceiver(){
@@ -99,12 +115,10 @@ public class MainActivity extends AppCompatActivity {
                 case "53.105":
                     moteText = (TextView) findViewById(R.id.mote4);
                     moteText.setText("Mote 53.105 "+mote.getLastValue());
-                    moteText.setTextColor(7);
                     break;
                 case "77.106":
                     moteText = (TextView) findViewById(R.id.mote5);
                     moteText.setText("Mote 77.106 "+mote.getLastValue());
-                    moteText.setTextColor(3);
                     break;
                 default:
                     break;
@@ -126,13 +140,13 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(bReceiver);
     }
 
-    /*
+
     public class MyBroadcastReceiver extends BroadcastReceiver{
 
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            Boolean checkBoxState = sharedPref.getBoolean("checkBoxState", false);
+            Boolean checkBoxState = sharedPref.getBoolean("onBoot", false);
             Log.d("CheckBoxStatus", checkBoxState.toString());
             if(checkBoxState){
 
@@ -146,5 +160,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-    */
+
 }
