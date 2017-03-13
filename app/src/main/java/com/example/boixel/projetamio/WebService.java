@@ -34,10 +34,11 @@ public class WebService extends Service {
     public WebService() {
     }
 
-    private void sendBroadcast (ArrayList<HashMap<String, String>> moteDataList){
+    private void sendBroadcast (ArrayList<HashMap<String, String>> moteDataList, String json){
         Intent intent = new Intent ("value"); //put the same message as in the filter you used in the activity when registering the receiver
         intent.putExtra("light_value1", moteDataList.get(moteDataList.size()-2).get("value"));
         intent.putExtra("light_value2", moteDataList.get(moteDataList.size()-1).get("value"));
+        intent.putExtra("data", json);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
@@ -163,7 +164,7 @@ public class WebService extends Service {
                 mote = obj.getString("mote");
 
                 if(motes.containsKey(mote))
-                    motes.get(mote). addMeasure(value, timestamp);
+                    motes.get(mote).addMeasure(value, timestamp);
             }
         }catch (JSONException e) {
             e.printStackTrace();

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +30,7 @@ import static java.lang.Long.parseLong;
 
 public class MainActivity extends AppCompatActivity {
     HashMap<String,HashMap<String, String>> moteDataList = new HashMap<String,HashMap<String, String>>();
+    SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d("MainActivity", "Creation de l'activité");
-
-        //CheckBox checkbox = (CheckBox) findViewById(R.id.checkBox);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
         ToggleButton serviceButton = (ToggleButton) findViewById(R.id.serviceButton);
         serviceButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
@@ -75,20 +77,13 @@ public class MainActivity extends AppCompatActivity {
                 //emailIntent.setType("text/plain");
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
                 emailIntent.putExtra(Intent.EXTRA_TEXT, "Body");
-                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"meskhen@gmail.com"});
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"malo.boixel@telecomnancy.net"});
                 startActivity(Intent.createChooser(emailIntent, "Send mail..."));
             }
         });
 
-        /*checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.d("Checkbox", "Checkbox state changed");
-                SharedPreferences sharedPref = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-                CheckBox checkbox = (CheckBox) findViewById(R.id.checkBox);
-                sharedPref.edit().putBoolean("checkBoxState", checkbox.isChecked()).apply();
-            }
-        });*/
+        Boolean checkBoxState = sharedPref.getBoolean("onBoot", false);
+        Log.d("CheckBoxStatus", checkBoxState.toString());
     }
 
     private BroadcastReceiver bReceiver = new BroadcastReceiver(){
@@ -188,9 +183,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            SharedPreferences sharedPref = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
-            //CheckBox checkbox = (CheckBox) findViewById(R.id.checkBox);
             Boolean checkBoxState = sharedPref.getBoolean("checkBoxState", false);
             Log.d("CheckBoxStatus", checkBoxState.toString());
             if(checkBoxState){
